@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  config-server:
+    build: .
+    container_name: config-server
+    ports: ["8888:8888"]
+    volumes:
+      - ../config-repo:/config-repo  # Monte le repo local
+    networks: [ev-network]
+    healthcheck:
+      test: ["CMD","wget","-qO-","http://localhost:8888/actuator/health"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+
+networks:
+  ev-network:
+    external: true

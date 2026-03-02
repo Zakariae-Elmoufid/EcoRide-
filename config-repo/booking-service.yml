@@ -1,0 +1,13 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://bookings-db:5432/bookings_db
+    username: ${BOOKINGS_DB_USER:bookings_user}
+    password: ${BOOKINGS_DB_PASS:bookings_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate.ddl-auto: update
+  kafka:
+    bootstrap-servers: kafka:9092

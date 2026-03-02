@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://users-db:5432/users_db
+    username: ${USERS_DB_USER:users_user}
+    password: ${USERS_DB_PASS:users_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: false
+
+custom:
+  max-score: 5.0
