@@ -1,0 +1,31 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://rides-db:5432/rides_db
+    username: ${RIDES_DB_USER:rides_user}
+    password: ${RIDES_DB_PASS:rides_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate.ddl-auto: update
+  kafka:
+    bootstrap-servers: kafka:9092
+
+# @RefreshScope — changeable à chaud sans redémarrage
+custom:
+  max-seats-per-ride: 4
+  min-autonomy-km: 50
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      user-service:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+  retry:
+    instances:
+      user-service:
+        maxAttempts: 3
+        waitDuration: 1s

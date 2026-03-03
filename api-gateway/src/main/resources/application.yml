@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "configserver:http://config-server:8888"
+  cloud:
+    config:
+      fail-fast: true
+
+#Validation JWT via Keycloak JWKS (pas besoin de code Java !)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/ev-carpooling

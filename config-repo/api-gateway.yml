@@ -1,0 +1,19 @@
+server:
+  port: 9000
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates: [Path=/api/users/**]
+          filters: [TokenRelay=]
+        - id: ride-service
+          uri: lb://ride-service
+          predicates: [Path=/api/rides/**]
+          filters: [TokenRelay=]
+        - id: booking-service
+          uri: lb://booking-service
+          predicates: [Path=/api/bookings/**]
+          filters: [TokenRelay=]
