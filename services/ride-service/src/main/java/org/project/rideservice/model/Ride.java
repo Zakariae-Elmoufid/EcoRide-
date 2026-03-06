@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.project.rideservice.model.RideStatus;
 
 import java.time.LocalDateTime;
 
@@ -58,7 +57,7 @@ public class Ride {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         if (status == null) {
-            status = RideStatus.PENDING;
+            status = RideStatus.OPEN;
         }
         if (remainingSeats == null) {
             remainingSeats = availableSeats;
@@ -70,5 +69,7 @@ public class Ride {
         updatedAt = LocalDateTime.now();
     }
 }
+
+
 
 

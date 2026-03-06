@@ -1,10 +1,10 @@
 package org.project.rideservice.model;
 
 public enum RideStatus {
-    PENDING,        // En attente (trajet créé mais pas encore confirmé)
-    CONFIRMED,      // Confirmé (le trajet est actif)
-    IN_PROGRESS,    // En cours (le trajet a commencé)
+    OPEN,           // Trajet ouvert (disponible pour réservations)
+    FULL,           // Trajet complet (tous les sièges sont réservés)
     COMPLETED,      // Terminé (le trajet est fini)
     CANCELLED       // Annulé
 }
+
 
