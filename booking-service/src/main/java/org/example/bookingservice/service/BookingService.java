@@ -79,14 +79,23 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException(id));
 
-        // Only the owner or admin can see this
         String passengerId = extractUserId(auth);
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        if (!isAdmin && !booking.getPassengerId().equals(passengerId)) {
-            throw new IllegalStateException("You are not allowed to view this booking");
+        // skip ownership check for anonymous (local-dev) or admin
+        if (!"anonymous".equals(passengerId)) {
+            boolean isAdmin = auth != null && auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin && !booking.getPassengerId().equals(passengerId)) {
+                throw new IllegalStateException("You are not allowed to view this booking");
+            }
         }
         return toResponse(booking);
+    }
+
+    public List<BookingResponse> getAllBookings() {
+        return bookingRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     public List<BookingResponse> getBookingsByRide(Long rideId) {
@@ -112,7 +121,8 @@ public class BookingService {
                 .orElseThrow(() -> new BookingNotFoundException(id));
 
         String passengerId = extractUserId(auth);
-        if (!booking.getPassengerId().equals(passengerId)) {
+        // skip ownership check for anonymous (local-dev)
+        if (!"anonymous".equals(passengerId) && !booking.getPassengerId().equals(passengerId)) {
             throw new IllegalStateException("You are not allowed to cancel this booking");
         }
         if (booking.getStatus() == BookingStatus.COMPLETED) {
@@ -127,6 +137,7 @@ public class BookingService {
     // ─── Helpers ──────────────────────────────────────────────────────────────
 
     private String extractUserId(Authentication auth) {
+        if (auth == null) return "anonymous";
         if (auth.getPrincipal() instanceof Jwt jwt) {
             return jwt.getSubject();
         }
@@ -134,6 +145,7 @@ public class BookingService {
     }
 
     private String extractEmail(Authentication auth) {
+        if (auth == null) return null;
         if (auth.getPrincipal() instanceof Jwt jwt) {
             return jwt.getClaimAsString("email");
         }

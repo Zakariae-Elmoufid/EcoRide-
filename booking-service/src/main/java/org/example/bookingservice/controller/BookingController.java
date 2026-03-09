@@ -7,7 +7,6 @@ import org.example.bookingservice.entity.BookingStatus;
 import org.example.bookingservice.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,6 @@ public class BookingController {
      * POST /api/bookings — Passenger creates a booking
      */
     @PostMapping
-    @PreAuthorize("hasRole('PASSAGER') or hasRole('PASSENGER')")
     public ResponseEntity<BookingResponse> createBooking(
             @Valid @RequestBody CreateBookingRequest request,
             Authentication auth) {
@@ -55,16 +53,22 @@ public class BookingController {
      * GET /api/bookings/ride/{rideId} — Get all bookings for a ride (driver/admin)
      */
     @GetMapping("/ride/{rideId}")
-    @PreAuthorize("hasRole('CONDUCTEUR') or hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<List<BookingResponse>> getBookingsByRide(@PathVariable Long rideId) {
         return ResponseEntity.ok(bookingService.getBookingsByRide(rideId));
+    }
+
+    /**
+     * GET /api/bookings/all — Get all bookings (admin)
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<BookingResponse>> getAllBookings() {
+        return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
     /**
      * PATCH /api/bookings/{id}/status?status=CONFIRMED — Update booking status (driver/admin)
      */
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasRole('CONDUCTEUR') or hasRole('DRIVER') or hasRole('ADMIN')")
     public ResponseEntity<BookingResponse> updateStatus(
             @PathVariable Long id,
             @RequestParam BookingStatus status,
@@ -76,10 +80,8 @@ public class BookingController {
      * DELETE /api/bookings/{id} — Passenger cancels their own booking
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('PASSAGER') or hasRole('PASSENGER')")
     public ResponseEntity<Void> cancelBooking(@PathVariable Long id, Authentication auth) {
         bookingService.cancelBooking(id, auth);
         return ResponseEntity.noContent().build();
     }
 }
-
