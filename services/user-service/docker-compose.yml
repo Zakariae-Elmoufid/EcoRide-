@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  users-db:               # rides-db | bookings-db
+    image: postgres:15-alpine
+    container_name: users-db
+    environment:
+      POSTGRES_DB: users_db     # rides_db | bookings_db
+      POSTGRES_USER: users_user
+      POSTGRES_PASSWORD: users_pass
+    volumes: ["users_data:/var/lib/postgresql/data"]
+    networks: [ev-network]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U users_user -d users_db"]
+      interval: 5s
+      retries: 5
+
+  user-service:             # ride-service | booking-service
+    build: .
+    container_name: user-service
+    ports: ["8081:8081"]   # 8082 | 8083
+    environment:
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8888"
+      USERS_DB_USER: users_user
+      USERS_DB_PASS: users_pass
+
+    networks: [ev-network]
+    healthcheck:
+      test: ["CMD","wget","-qO-","http://localhost:8081/actuator/health"]
+      interval: 10s
+      retries: 5
+
+volumes:
+  users_data:
+networks:
+  ev-network:
+    external: true

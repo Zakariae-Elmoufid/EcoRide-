@@ -1,0 +1,25 @@
+spring:
+  # Override config-server import for local dev (no Docker config-server)
+  config:
+    import: "optional:configserver:"   # skip config-server when running locally
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users_db
+    username: users_user
+    password: users_pass
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Use localhost:8080 instead of Docker hostname "keycloak"
+          issuer-uri: http://localhost:8080/realms/ev-carpooling
+
+eureka:
+  client:
+    enabled: false   # disable Eureka when running locally

@@ -11,8 +11,10 @@ import com.userservice.mapper.UserMapper;
 import com.userservice.repository.UserRepository;
 import com.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse createUser(String keycloakId,UserRequest request) {
+        if (userRepository.existsByKeycloakId(keycloakId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Profile already exists");
+        }
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException("Email already exists: " + request.email());
         }
@@ -40,6 +46,7 @@ public class UserServiceImpl implements UserService {
             default -> throw new IllegalArgumentException("Unknown role: " + request.role());
         }
 
+        user.setKeycloakId(keycloakId);
         user = userRepository.save(user);
         return userMapper.toResponse(user);
     }
@@ -49,6 +56,13 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        return userMapper.toResponse(user);
+    }
+
+    public UserResponse getUserByKeycloakId(String keycloakId){
+        User user = userRepository.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found"));
         return userMapper.toResponse(user);
     }
 

@@ -5,9 +5,10 @@ import com.userservice.dto.UserRequest;
 import com.userservice.dto.UserResponse;
 
 public interface UserService {
-    UserResponse createUser(UserRequest request);
+    UserResponse createUser(String keycloakId,UserRequest request);
 
     UserResponse getUserById(Long id);
+    UserResponse getUserByKeycloakId(String keycloakId);
 
     UserResponse getUserByEmail(String email);
 
