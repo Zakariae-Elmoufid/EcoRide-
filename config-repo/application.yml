@@ -1,11 +1,11 @@
-#spring:
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: http://keycloak:8080/realms/ev-carpooling
-#  zipkin:
-#    base-url: http://zipkin:9411
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/ev-carpooling
+  zipkin:
+    base-url: http://zipkin:9411
 
 eureka:
   client:
@@ -20,20 +20,22 @@ management:
       exposure:
         include: health, info, prometheus, metrics
 
+
   metrics:
     export:
       prometheus:
         enabled: true
     tags:
       application: ${spring.application.name}
-
-spring:
+  tracing:
+    sampling:
+      probability: 1.0
   zipkin:
-    base-url: http://zipkin:9411
+    base-url: http://zipkin:9411/api/v2/spans
   sleuth:
     sampler:
       probability: 1.0
-#
-#logging:
-#  pattern:
-#    level: "%5p [${spring.application.name},%X{traceId:-},%X{spanId:-}]"
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId:-},%X{spanId:-}]"

@@ -2,6 +2,17 @@ server:
   port: 9000
 
 spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak:8080/realms/ev-carpooling
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: ev-gateway
+            authorization-grant-type: password
   cloud:
     gateway:
       routes:
@@ -16,4 +27,5 @@ spring:
         - id: booking-service
           uri: lb://booking-service
           predicates: [Path=/api/bookings/**]
-          filters: [TokenRelay=]
+          filters:
+            - TokenRelay

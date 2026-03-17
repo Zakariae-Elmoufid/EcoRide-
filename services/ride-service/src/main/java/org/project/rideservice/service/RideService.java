@@ -40,7 +40,7 @@ public class RideService {
         // Vérifier que le driver existe via Feign
         try {
             DriverInfoDto driverInfo = userServiceClient.getUserById(request.getDriverId());
-            log.info("Driver vérifié: {}", driverInfo.getUsername());
+            log.info("Driver vérifié: {} {}", driverInfo.getFirstName(), driverInfo.getLastName());
         } catch (Exception e) {
             log.error("Erreur lors de la vérification du driver: {}", e.getMessage());
             throw new InvalidOperationException("Le driver avec l'ID " + request.getDriverId() + " n'existe pas ou n'est pas disponible");
@@ -107,7 +107,6 @@ public class RideService {
         try {
             DriverInfoDto driverInfo = userServiceClient.getUserById(ride.getDriverId());
             response.setDriverInfo(driverInfo);
-            log.info("Info driver récupérée: {}", driverInfo.getUsername());
         } catch (Exception e) {
             log.error("Impossible de récupérer les infos du driver: {}", e.getMessage());
             // On continue sans les infos du driver (fallback appliqué)

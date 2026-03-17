@@ -147,6 +147,8 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+
+
         <!-- MapStruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>

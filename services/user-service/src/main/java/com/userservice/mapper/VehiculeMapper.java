@@ -8,7 +8,8 @@ import com.userservice.dto.VehiculeResponse;
 
 @Mapper(componentModel = "spring")
 public interface VehiculeMapper {
-    @Mapping(target = "driver.id", source = "driverId")
+
+    @Mapping(target = "driver", ignore = true)  // driver is set manually in VehiculeServiceImpl
     Vehicule toEntity(VehiculeRequest request);
 
     @Mapping(target = "driverId", source = "driver.id")

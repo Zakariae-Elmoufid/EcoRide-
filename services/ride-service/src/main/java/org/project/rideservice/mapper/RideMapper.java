@@ -4,14 +4,13 @@ import org.project.rideservice.dto.RideRequestDto;
 import org.project.rideservice.dto.RideResponseDto;
 import org.project.rideservice.model.Ride;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.Mapping;
 
 @Component
 public class RideMapper {
-
     public Ride toEntity(RideRequestDto dto) {
         Ride ride = new Ride();
         ride.setDriverId(dto.getDriverId());
-        ride.setVehicleId(dto.getVehicleId());
         ride.setDepartureTime(dto.getDepartureTime());
         ride.setDepartureCity(dto.getDepartureCity());
         ride.setArrivalCity(dto.getArrivalCity());
@@ -25,7 +24,6 @@ public class RideMapper {
         RideResponseDto dto = new RideResponseDto();
         dto.setId(ride.getId());
         dto.setDriverId(ride.getDriverId());
-        dto.setVehicleId(ride.getVehicleId());
         dto.setDepartureTime(ride.getDepartureTime());
         dto.setDepartureCity(ride.getDepartureCity());
         dto.setArrivalCity(ride.getArrivalCity());

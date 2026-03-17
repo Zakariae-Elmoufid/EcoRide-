@@ -12,15 +12,13 @@ public class UserServiceClientFallback implements UserServiceClient {
     public DriverInfoDto getUserById(Long userId) {
         log.error("Fallback: Impossible de récupérer l'utilisateur avec l'ID: {}", userId);
 
-        // Retourner un objet par défaut en cas d'erreur
         DriverInfoDto fallbackDriver = new DriverInfoDto();
         fallbackDriver.setId(userId);
-        fallbackDriver.setUsername("Indisponible");
         fallbackDriver.setEmail("N/A");
         fallbackDriver.setFirstName("N/A");
         fallbackDriver.setLastName("N/A");
-        fallbackDriver.setPhoneNumber("N/A");
-        fallbackDriver.setRating(0.0);
+        fallbackDriver.setPhone("N/A");
+        fallbackDriver.setRole("DRIVER");
 
         return fallbackDriver;
     }

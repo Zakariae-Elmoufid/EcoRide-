@@ -3,29 +3,41 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://rides-db:5432/rides_db
-    username: ${RIDES_DB_USER:rides_user}
-    password: ${RIDES_DB_PASS:rides_pass}
+    url: jdbc:postgresql://postgres-ride:5432/ride_db
+    username: ride_user
+    password: ride_password
     driver-class-name: org.postgresql.Driver
+
   jpa:
-    hibernate.ddl-auto: update
-  kafka:
-    bootstrap-servers: kafka:9092
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
 
-# @RefreshScope — changeable à chaud sans redémarrage
-custom:
-  max-seats-per-ride: 4
-  min-autonomy-km: 50
+  eureka:
+    client:
+      service-url:
+        defaultZone: http://eureka-server:8761/eureka/
+    instance:
+      prefer-ip-address: true
 
-resilience4j:
-  circuitbreaker:
-    instances:
-      user-service:
-        slidingWindowSize: 10
-        failureRateThreshold: 50
-        waitDurationInOpenState: 30s
-  retry:
-    instances:
-      user-service:
-        maxAttempts: 3
-        waitDuration: 1s
+
+#custom:
+#  max-seats-per-ride: 4
+#  min-autonomy-km: 50
+#
+#resilience4j:
+#  circuitbreaker:
+#    instances:
+#      user-service:
+#        slidingWindowSize: 10
+#        failureRateThreshold: 50
+#        waitDurationInOpenState: 30s
+#  retry:
+#    instances:
+#      user-service:
+#        maxAttempts: 3
+#        waitDuration: 1s

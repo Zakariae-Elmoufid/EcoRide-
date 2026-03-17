@@ -21,8 +21,6 @@ public class Ride {
     @Column(nullable = false)
     private Long driverId;
 
-    @Column(nullable = false)
-    private Long vehicleId;
 
     @Column(nullable = false)
     private LocalDateTime departureTime;

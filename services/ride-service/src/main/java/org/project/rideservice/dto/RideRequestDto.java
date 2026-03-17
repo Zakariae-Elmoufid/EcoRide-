@@ -15,8 +15,6 @@ public class RideRequestDto {
     @NotNull(message = "Driver ID est obligatoire")
     private Long driverId;
 
-    @NotNull(message = "Vehicle ID est obligatoire")
-    private Long vehicleId;
 
     @NotNull(message = "L'heure de départ est obligatoire")
     @Future(message = "L'heure de départ doit être dans le futur")
