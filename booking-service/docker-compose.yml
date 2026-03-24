@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+
+  bookings-db:
+    image: postgres:15-alpine
+    container_name: bookings-db
+    environment:
+      POSTGRES_DB: bookings_db
+      POSTGRES_USER: bookings_user
+      POSTGRES_PASSWORD: bookings_pass
+    ports:
+      - "5435:5432"
+    volumes:
+      - bookings-db-data:/var/lib/postgresql/data
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookings_user -d bookings_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: booking-service
+    ports:
+      - "8083:8083"
+    environment:
+      - BOOKINGS_DB_USER=bookings_user
+      - BOOKINGS_DB_PASS=bookings_pass
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      bookings-db:
+        condition: service_healthy
+    networks:
+      - ev-network
+    restart: on-failure
+
+networks:
+  ev-network:
+    driver: bridge
+
+volumes:
+  bookings-db-data:
+
