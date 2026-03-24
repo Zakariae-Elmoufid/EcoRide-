@@ -15,6 +15,8 @@ import org.project.rideservice.model.RideStatus;
 import org.project.rideservice.repository.RideRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,13 +35,28 @@ public class RideService {
     /**
      * Créer un nouveau trajet (DRIVER uniquement)
      */
+
+    public String getJwtFromRequest() {
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attrs != null) {
+            String header = attrs.getRequest().getHeader("Authorization");
+            if (header != null && header.startsWith("Bearer ")) {
+                return header;
+            }
+        }
+        return null;
+    }
     @Transactional
     public RideResponseDto createRide(RideRequestDto request) {
         log.info("Création d'un nouveau trajet par le driver ID: {}", request.getDriverId());
+        String jwt = getJwtFromRequest(); // récupère le token depuis la requête entrante
 
+        if (jwt == null) {
+            throw new InvalidOperationException("JWT manquant dans la requête");
+        }
         // Vérifier que le driver existe via Feign
         try {
-            DriverInfoDto driverInfo = userServiceClient.getUserById(request.getDriverId());
+            DriverInfoDto driverInfo = userServiceClient.getUserById(request.getDriverId(),jwt);
             log.info("Driver vérifié: {} {}", driverInfo.getFirstName(), driverInfo.getLastName());
         } catch (Exception e) {
             log.error("Erreur lors de la vérification du driver: {}", e.getMessage());
@@ -102,10 +119,11 @@ public class RideService {
                 .orElseThrow(() -> new ResourceNotFoundException("Trajet avec l'ID " + id + " introuvable"));
 
         RideResponseDto response = rideMapper.toDto(ride);
+        String jwt = getJwtFromRequest(); // récupère le token depuis la requête entrante
 
         // Récupérer les infos du driver via Feign
         try {
-            DriverInfoDto driverInfo = userServiceClient.getUserById(ride.getDriverId());
+            DriverInfoDto driverInfo = userServiceClient.getUserById(ride.getDriverId(),jwt);
             response.setDriverInfo(driverInfo);
         } catch (Exception e) {
             log.error("Impossible de récupérer les infos du driver: {}", e.getMessage());

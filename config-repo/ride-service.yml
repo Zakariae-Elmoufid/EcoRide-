@@ -2,6 +2,11 @@ server:
   port: 8082
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/ev-carpooling
   datasource:
     url: jdbc:postgresql://postgres-ride:5432/ride_db
     username: ride_user
@@ -10,7 +15,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -23,7 +28,17 @@ spring:
         defaultZone: http://eureka-server:8761/eureka/
     instance:
       prefer-ip-address: true
+  feign:
+    circuitbreaker:
+      enabled: true
 
+
+  hystrix:
+    command:
+      default:
+        execution:
+          isolation:
+            strategy: SEMAPHORE
 
 #custom:
 #  max-seats-per-ride: 4

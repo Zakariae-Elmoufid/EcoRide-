@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class UserServiceClientFallback implements UserServiceClient {
 
     @Override
-    public DriverInfoDto getUserById(Long userId) {
+    public DriverInfoDto getUserById(Long userId,String token) {
         log.error("Fallback: Impossible de récupérer l'utilisateur avec l'ID: {}", userId);
 
         DriverInfoDto fallbackDriver = new DriverInfoDto();
